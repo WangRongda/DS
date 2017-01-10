@@ -1,0 +1,128 @@
+////////////////////////////////////////////////////////////////////////////////
+//       Filename:  theFirstOrder.cc
+//
+//    Description:   
+//
+//        Version:  1.0
+//        Created:  2016-11-20 16:46:10
+//       Revision:  none
+//       Compiler:  gcc
+//
+//         Author:  WangRongda (WRD), 123899696@qq.com
+//   Organization:  HDU
+//
+// Copyright (c) 2016, WangRongda
+////////////////////////////////////////////////////////////////////////////////
+
+
+#include <iostream>
+using namespace std;
+
+const int M = 100000;
+
+struct node{
+	int data;
+	node *lc, *rc;
+};
+
+// Non-recursive Preorder traversal
+void preorder(node *t){
+	node *s[M], *p=t;
+	int top = -1; //置栈空
+	do
+	{
+		while(p != NULL)
+		{
+			cout << p->data << " "; //输出元素，用一个空格隔开
+			s[++top] = p;
+			p = p->lc;
+		}
+		if(top != -1)
+		{
+			p = s[top--];
+			p = p->rc;
+		}
+	} while(top!=-1 || p!=NULL);
+}
+
+// Non-recursive inorder traversal
+void middleorder(node *t){
+	node *s[M], *p=t;
+	int top = -1; //置栈空
+	do
+	{
+		while(p != NULL)
+		{
+			s[++top] = p;
+			p = p->lc;
+		}
+		if(top != -1)
+		{
+			p = s[top--];
+			cout << p->data << " "; //输出元素，用一个空格隔开
+			p = p->rc;
+		}
+	} while(top!=-1 || p!=NULL);
+}
+
+// Non-recursive level travelsal
+void levelorder(node *t)
+{
+	node *s[M], *p=t;
+	int f, r; 
+	f = r = 1; //设置队列的头指针和尾指针
+	s[1] = p;
+	while(f<=r)
+	{
+		p = s[f++];
+		cout << p->data << " "; //输出元素，用一个空格隔开
+		if(p->lc != NULL)
+		{
+			r++;
+			s[r] = p->lc;
+		}
+		if(p->rc != NULL)
+		{
+			r++;
+			s[r] = p->rc;
+		}
+	}
+}
+
+//构建二叉排序树
+node* buildBinaryTree(int R[], int n){
+	int i;
+	node *root = new node, *p;
+	root->data = R[0];
+	root->lc = root->rc = NULL;
+	for(i=1; i<n; i++){
+		node *newNode = new node;
+		newNode->data = R[i];
+		newNode->lc = newNode->rc = NULL;
+		p = root;
+		while(p != NULL){
+			if(p->data <= R[i]){
+				if(p->rc == NULL) {p->rc = newNode;break;}
+				else p = p->rc;
+			}
+			else {
+				if(p->lc == NULL) {p->lc = newNode;break;}
+				else p = p->lc;
+			}
+		}
+	}
+
+	return root;
+}
+
+int main()
+{
+	int i, n, array[1000];
+	cin >> n;
+	for(i=0; i<n; i++) cin >> array[i];
+	node *root = buildBinaryTree(array, n);
+	preorder(root);
+	cout << endl;
+	middleorder(root);
+	return 0;
+}
